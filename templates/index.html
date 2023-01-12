@@ -1,7 +1,11 @@
-<h1>Hello world</h1>
-<p>This is a simple web page</p>
-<p>My name is {{first}}</p>
-<h3>Fav things</h3>
-{% for things in f%}
-    {{things}}</br>
-{%endfor%}
+{%extends 'base.html'%}
+{% block content %}
+    
+    <h1>Hello world</h1>
+    <p>This is a simple web page</p>
+    <p>My name is {{first}}</p>
+    <h3>Fav things</h3>
+    {% for things in f%}
+        {{things}}</br>
+    {%endfor%}
+{%endblock%}
