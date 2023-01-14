@@ -1,0 +1,1 @@
+document.getElementById('demo').innerHTML = 'This is created using Basic JAVA script'
