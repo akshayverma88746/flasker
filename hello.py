@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash # flash for flashing messages
+from flask import Flask, render_template, flash, request # flash for flashing messages
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, email_validator
@@ -8,13 +8,15 @@ from datetime import datetime
 app = Flask(__name__)
 app.app_context().push()
 # Add data base to our app
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost/our_users'
 # Secret key
 app.config['SECRET_KEY']="nothing"
 
 # Initialize the database
 db = SQLAlchemy(app)
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+
 # Create Model of the database
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -36,7 +38,10 @@ class UserForm(FlaskForm):
 class NameForm(FlaskForm):
     name = StringField("Please enter your name", validators=[DataRequired()])   # Create a text field for input
     submit = SubmitField("Submit")
-# Create a route 
+ 
+ #for updation
+
+
 @app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
     name = None
@@ -90,5 +95,29 @@ def name():
         flash("Form Submission Successful")
     return render_template('name.html', name = name, form = form)
 
-    
+
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+def update(id):
+	form = UserForm()
+	name_to_update = Users.query.get_or_404(id)
+	if request.method == "POST":
+		name_to_update.name = request.form['name']
+		name_to_update.email = request.form['email']
+		try:
+			db.session.commit()
+			flash("User Updated Successfully!")
+			return render_template("update.html", 
+				form=form,
+				name_to_update = name_to_update, id=id)
+		except:
+			flash("Error!  Looks like there was a problem...try again!")
+			return render_template("update.html", 
+				form=form,
+				name_to_update = name_to_update,
+				id=id)
+	else:
+		return render_template("update.html", 
+				form=form,
+				name_to_update = name_to_update,
+				id = id)
 
