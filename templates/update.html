@@ -13,28 +13,30 @@
         <table class="table table-light table-hover table-bordered table-striped">
             {%for our_user in our_users%}
                 <tr>
-                    <td>{{our_user.id}}. {{our_user.name}} - {{our_user.email}}</td>
+                    <td>{{our_user.id}}. <a href="#">{{our_user.name}}</a> - {{our_user.email}}- {{our_user.favorite_color}}</td>
                 </tr>
             {%endfor%}
         </table>
         </br>
         
     {%else%}
-        <h1>Update User...</h1>
+        <h1>Update User</h1>
         </br>
         <div class="shadow p-3 mb-5 bg-body-tertiary rounded">    
-            <form method="POST">
+            <form action="/update/{{name_to_update.id}}" method="POST">
                 {{ form.hidden_tag() }}
                 {{ form.name.label(class="form-label") }}
-                {{ form.name(class="form-control") }}
+                {{ form.name(class="form-control", value=name_to_update.name) }}
                 </br>
                 {{ form.email.label(class="form-label") }}
-                {{ form.email(class="form-control") }}
+                {{ form.email(class="form-control", value=name_to_update.email) }}
+                </br>
+                {{ form.favorite_color.label(class="form-label") }}
+                {{ form.favorite_color(class="form-control", value=name_to_update.favorite_color) }}
                 </br>
                 {{ form.submit(class="btn btn-primary") }}
             </form>
         </div>
         </br></br></br>
-          
     {%endif%}
 {%endblock%}
