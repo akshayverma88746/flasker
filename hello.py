@@ -4,20 +4,25 @@ from wtforms import StringField, SubmitField, PasswordField, BooleanField, Valid
 from wtforms.validators import DataRequired, email_validator, EqualTo, Length
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from datetime import datetime
+from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
+from wtforms.widgets import TextArea
+
 # Create a flask object
 app = Flask(__name__)
 app.app_context().push()
+
 # Add data base to our app
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost/our_users'
+
 # Secret key
 app.config['SECRET_KEY']="nothing"
 
 # Initialize the database
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
 
 # Create Model of the database
 class Users(db.Model):
@@ -43,6 +48,14 @@ class Users(db.Model):
         return '<Name %r>' %self.name
 
 
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.String(300), nullable = False)
+    content = db.Column(db.Text)
+    author = db.Column(db.String(300))
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    slug = db.Column(db.String(300))
+
 
 # Create a form class
 class UserForm(FlaskForm):
@@ -59,7 +72,6 @@ class NameForm(FlaskForm):
     name = StringField("Please enter your name", validators=[DataRequired()])   # Create a text field for input
     submit = SubmitField("Submit")
  
- #for updation
 
 
 # Create password form
@@ -69,7 +81,13 @@ class PasswordForm(FlaskForm):
 	submit = SubmitField("Submit")
 
 
-	
+class PostForm(FlaskForm):
+    title = StringField("Enter the title of the Post", validators=[DataRequired()])
+    author = StringField("Enter Author Name", validators=[DataRequired()])
+    slug = StringField("Slug", validators=[DataRequired()])
+    content = StringField("Content", validators=[DataRequired()], widget= TextArea())
+    submit = SubmitField("Submit")
+
 
 @app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
@@ -122,7 +140,12 @@ def not_found(e):
 def server(e):
     return render_template("500.html"), 500
     
-
+# Function that return json
+@app.route('/date')
+def get_current_date():
+    return {"Date": date.today()}
+    
+    
 #Create name page
 @app.route('/name', methods=['GET', 'POST'])
 def name():
@@ -205,3 +228,21 @@ def test_pw():
 		passed = check_password_hash(pw_to_check.password_hash, password)
 
 	return render_template('test.html', email = email, password = password, pw_to_check = pw_to_check, passed = passed, form = form)
+
+
+# Add post page 
+@app.route('/add-post', methods=['GET', 'POST'])
+def add_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, content=form.content.data, slug=form.slug.data)
+        form.title.data = ''
+        form.content.data = ''
+        form.author.data = ''
+        form.slug.data = ''
+        
+        db.session.add(post)    # For adding post 
+        db.session.commit()     # For commiting changes
+        flash("Post added successully")  
+    
+    return render_template('add_post.html', form=form)
