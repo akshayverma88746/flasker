@@ -41,21 +41,9 @@ class Users(db.Model):
     # Create String
     def __repr__(self):
         return '<Name %r>' %self.name
-# Delete record
-@app.route('/delete/<int:id>')
-def delete(id):
-    user_to_delete = Users.query.get_or_404(id)
-    name = None;
-    form = UserForm()
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash("User Deleted Successfully !!")
-        our_users = Users.query.order_by(Users.date_added)
-        return render_template("add_user.html", form = form, name = name, our_users= our_users)
-    except:
-        flash("There was a problem deleting the user.... Try again")
-        return render_template("add_user.html", form = form, name = name, our_users= our_users)
+
+
+
 # Create a form class
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])# Create a text field for input
@@ -65,6 +53,7 @@ class UserForm(FlaskForm):
     password_hash2 = PasswordField("Confirm Password", validators=[DataRequired()])
     submit = SubmitField("Submit")
     
+
 # Create a form class
 class NameForm(FlaskForm):
     name = StringField("Please enter your name", validators=[DataRequired()])   # Create a text field for input
@@ -72,6 +61,15 @@ class NameForm(FlaskForm):
  
  #for updation
 
+
+# Create password form
+class PasswordForm(FlaskForm):
+	email = StringField("What's Your Email", validators=[DataRequired()])
+	password_hash = PasswordField("What's Your Password", validators=[DataRequired()])
+	submit = SubmitField("Submit")
+
+
+	
 
 @app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
@@ -94,16 +92,20 @@ def add_user():
     our_users = Users.query.order_by(Users.date_added)
     return render_template("add_user.html", form = form, name = name, our_users= our_users)
 
+
+
 @app.route('/')
 def index():
     first_name = "Akshay"
     fav = ["Gaming", "travelling", "Gym", 41]
     return render_template('index.html', first = first_name, f = fav)
  
+
 # Create user
 @app.route("/user/<name>")
 def user(name):
     return render_template('user.html', name=name)
+
 
 
 #Create custom error page
@@ -113,11 +115,14 @@ def user(name):
 def not_found(e):
     return render_template("404.html"), 404
     
+
+
 # Internal server error
 @app.errorhandler(500)
 def server(e):
     return render_template("500.html"), 500
     
+
 #Create name page
 @app.route('/name', methods=['GET', 'POST'])
 def name():
@@ -129,6 +134,7 @@ def name():
         form.name.data = ""
         flash("Form Submission Successful")
     return render_template('name.html', name = name, form = form)
+
 
 
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
@@ -157,3 +163,45 @@ def update(id):
 				name_to_update = name_to_update,
 				id = id)
 
+
+
+# Delete user
+@app.route('/delete/<int:id>')
+def delete(id):
+    user_to_delete = Users.query.get_or_404(id)
+    name = None;
+    form = UserForm()
+    try:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        flash("User Deleted Successfully !!")
+        our_users = Users.query.order_by(Users.date_added)
+        return render_template("add_user.html", form = form, name = name, our_users= our_users)
+    except:
+        flash("There was a problem deleting the user.... Try again")
+        return render_template("add_user.html", form = form, name = name, our_users= our_users)
+        
+
+#Password test page 
+@app.route('/test', methods=['GET', 'POST'])
+def test_pw():
+	email = None
+	password = None
+	pw_to_check = None
+	passed = None
+	form = PasswordForm()
+	# Validate Form
+	if form.validate_on_submit():
+		email = form.email.data
+		password = form.password_hash.data
+		# Clear the form
+		form.email.data = ''
+		form.password_hash.data = ''
+
+		# Lookup User By Email Address
+		pw_to_check = Users.query.filter_by(email=email).first()
+		
+		# Check Hashed Password
+		passed = check_password_hash(pw_to_check.password_hash, password)
+
+	return render_template('test.html', email = email, password = password, pw_to_check = pw_to_check, passed = passed, form = form)
