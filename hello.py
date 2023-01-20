@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, request # flash for flashing messages
+from flask import Flask, render_template, flash, request, redirect, url_for# flash for flashing messages
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
 from wtforms.validators import DataRequired, email_validator, EqualTo, Length
@@ -260,3 +260,39 @@ def posts():
 def post(id):
     post = Post.query.get_or_404(id)
     return render_template('post.html', post=post)
+    
+    
+@app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+def edit_post(id):
+    post = Post.query.get_or_404(id)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.author = form.author.data
+        post.slug = form.slug.data
+        post.content = form.content.data
+        # Add to database
+        db.session.add(post)
+        db.session.commit()
+        flash("Post updated successfully")
+        return redirect(url_for('post', id=post.id))
+    form.title.data=post.title 
+    form.author.data=post.author
+    form.slug.data=post.slug
+    form.content.data=post.content
+    return render_template('edit_post.html', form=form)
+    
+    
+@app.route('/post/delete/<int:id>')
+def delete_post(id):
+    post_to_delete = Post.query.get_or_404(id)
+    try:
+        db.session.delete(post_to_delete)
+        db.session.commit()
+        flash("Post Deleted Successfully !!")
+        posts = Post.query.order_by(Post.date_posted)
+        return render_template("posts.html", posts=posts)
+    except:
+        flash("There was a problem deleting the Post.... Try again")
+        posts = Post.query.order_by(Post.date_posted)
+        return render_template("posts.html", posts=posts)
