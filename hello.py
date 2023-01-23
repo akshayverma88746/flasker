@@ -125,7 +125,7 @@ def add_user():
         form.email.data = ''
         form.favorite_color.data = ''
         form.password_hash = ''
-        flash("User Added Successfully")
+        flash("Sign in successfull")
     our_users = Users.query.order_by(Users.date_added)
     return render_template("add_user.html", form = form, name = name, our_users= our_users)
 
@@ -282,6 +282,7 @@ def post(id):
     
     
 @app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_post(id):
     post = Post.query.get_or_404(id)
     form = PostForm()
