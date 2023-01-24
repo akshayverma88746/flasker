@@ -7,19 +7,7 @@
         </div>
         
     {%endfor%}
-    {%if name%}
-        <h1>Update User</h1>
-        </br></br></br>
-        <table class="table table-light table-hover table-bordered table-striped">
-            {%for our_user in our_users%}
-                <tr>
-                    <td>{{our_user.id}}. <a href="#">{{our_user.name}}</a> - {{our_user.email}}- {{our_user.favorite_color}}</td>
-                </tr>
-            {%endfor%}
-        </table>
-        </br>
-        
-    {%else%}
+    {%if id == current_user.id%}
         <h1>Update User</h1>
         </br>
         <div class="shadow p-3 mb-5 bg-body-tertiary rounded">    
@@ -42,5 +30,11 @@
             </form>
         </div>
         </br></br></br>
+    {%else%}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        Sorry you are not permitted to edit this user 
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     {%endif%}
+
 {%endblock%}
