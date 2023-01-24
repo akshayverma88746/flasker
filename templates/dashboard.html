@@ -23,7 +23,35 @@
                 <strong>Date Joined: </strong>{{current_user.date_added}}</br>
               </p>
               <a href="{{url_for('logout')}}" class="btn btn-primary">Logout</a>
+              <a href="{{ url_for ('update', id=current_user.id)}}" class="btn btn-primary">Update Profile</a>
+              <a href = "{{ url_for ('delete', id=current_user.id)}}" class="btn btn-danger">Delete Profile</a>
             </div>
           </div>
+          <br/>
+          <div class="card">
+            <div class="card-header">
+                <strong>Update Profile</strong>
+                </br>
+            </div>
+          </div>
+            <div class="shadow p-3 mb-5 bg-body-tertiary rounded">    
+              <form action="/dashboard" method="POST">
+                  {{ form.hidden_tag() }}
+                  {{ form.name.label(class="form-label") }}
+                  {{ form.name(class="form-control", value=name_to_update.name) }}
+                  </br>
+                  {{ form.username.label(class="form-label") }}
+                  {{ form.username(class="form-control", value=name_to_update.username) }}
+                  </br>
+                  {{ form.email.label(class="form-label") }}
+                  {{ form.email(class="form-control", value=name_to_update.email) }}
+                  </br>
+                  {{ form.favorite_color.label(class="form-label") }}
+                  {{ form.favorite_color(class="form-control", value=name_to_update.favorite_color) }}
+                  </br>
+                  {{ form.submit(class="btn btn-primary") }}
+              </form>
+            </div>
+            
         
 {%endblock%}

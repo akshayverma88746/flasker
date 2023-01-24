@@ -8,6 +8,7 @@ from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms.widgets import TextArea
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user 
+from webforms import UserForm, PostForm, NameForm, LoginForm, PasswordForm
 # Create a flask object
 app = Flask(__name__)
 app.app_context().push()
@@ -59,44 +60,6 @@ class Post(db.Model):
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     slug = db.Column(db.String(300))
 
-
-# Create a form class
-class UserForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])# Create a text field for input
-    username = StringField("Username", validators=[DataRequired()])
-    email = StringField("Email", validators=[DataRequired()])
-    favorite_color = StringField("Color")
-    password_hash = PasswordField("Password", validators=[DataRequired(), EqualTo('password_hash2', message="PAssword must match")])
-    password_hash2 = PasswordField("Confirm Password", validators=[DataRequired()])
-    submit = SubmitField("Submit")
-    
-
-# Create a form class
-class NameForm(FlaskForm):
-    name = StringField("Please enter your name", validators=[DataRequired()])   # Create a text field for input
-    submit = SubmitField("Submit")
- 
-
-
-# Create password form
-class PasswordForm(FlaskForm):
-	email = StringField("What's Your Email", validators=[DataRequired()])
-	password_hash = PasswordField("What's Your Password", validators=[DataRequired()])
-	submit = SubmitField("Submit")
-
-
-class PostForm(FlaskForm):
-    title = StringField("Enter the title of the Post", validators=[DataRequired()])
-    author = StringField("Enter Author Name", validators=[DataRequired()])
-    slug = StringField("Slug", validators=[DataRequired()])
-    content = StringField("Content", validators=[DataRequired()], widget= TextArea())
-    submit = SubmitField("Submit")
-
-
-class LoginForm(FlaskForm):
-    username = StringField("Enter your username", validators=[DataRequired()])
-    password = StringField("Enter your password", validators=[DataRequired()])
-    submit = SubmitField("Submit")
 
 # Flask login stuff
 login_manager = LoginManager()
@@ -187,6 +150,7 @@ def update(id):
 		name_to_update.name = request.form['name']
 		name_to_update.email = request.form['email']
 		name_to_update.favorite_color = request.form['favorite_color']
+		name_to_update.username = request.form['username']
 		try:
 			db.session.commit()
 			flash("User Updated Successfully!")
@@ -338,7 +302,31 @@ def login():
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-
+    form = UserForm()
+    id = current_user.id
+    name_to_update = Users.query.get_or_404(id)
+    if request.method == "POST":
+        name_to_update.name = request.form['name']
+        name_to_update.email = request.form['email']
+        name_to_update.favorite_color = request.form['favorite_color']
+        name_to_update.username = request.form['username']
+        try:
+            db.session.commit()
+            flash("User Updated Successfully!")
+            return render_template("dashboard.html", 
+				form=form,
+				name_to_update = name_to_update, id=id)
+        except:
+            flash("Error!  Looks like there was a problem...try again!")
+            return render_template("dashboard.html", 
+				form=form,
+				name_to_update = name_to_update,
+				id=id)
+    else:
+        return render_template("dashboard.html", 
+				form=form,
+				name_to_update = name_to_update,
+				id = id)
     return render_template('dashboard.html')
     
     
