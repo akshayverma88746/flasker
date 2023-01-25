@@ -12,7 +12,7 @@
     {%for post in posts%}
     <div class="shadow p-3 mb-5 bg-body-tertiary rounded"> 
         <h2>{{post.title}}</h2>
-        By: {{post.author}}<br/>
+        By: {{post.poster.name}}<br/>
         {{post.date_posted}}
         <br/>
         {{post.content}}<br/><br/>

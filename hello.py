@@ -24,11 +24,20 @@ app.config['SECRET_KEY']="nothing"
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# FLask login stuff
 
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.String(300), nullable = False)
+    content = db.Column(db.Text)
+    #author = db.Column(db.String(300))
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    slug = db.Column(db.String(300))
+    # Create a forign key to connect to user and this will refer to the primary of the user
+    poster_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 # Create Model of the database
 class Users(db.Model, UserMixin):
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(200), nullable = False, unique= True)
     name = db.Column(db.String(200), nullable= False)
@@ -37,6 +46,8 @@ class Users(db.Model, UserMixin):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     #Create some password stuff
     password_hash = db.Column(db.String(200)) #, nullable = False, unique = True)
+    # Users can have many post
+    post = db.relationship('Post', backref='poster')
     @property
     def password(self):
         raise AttributeError('Password is not a readle atribute')
@@ -51,14 +62,6 @@ class Users(db.Model, UserMixin):
     def __repr__(self):
         return '<Name %r>' %self.name
 
-
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    title = db.Column(db.String(300), nullable = False)
-    content = db.Column(db.Text)
-    author = db.Column(db.String(300))
-    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
-    slug = db.Column(db.String(300))
 
 
 # Flask login stuff
@@ -143,6 +146,7 @@ def name():
 
 
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def update(id):
 	form = UserForm()
 	name_to_update = Users.query.get_or_404(id)
@@ -218,10 +222,10 @@ def test_pw():
 def add_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, slug=form.slug.data)
+        poster = current_user.id
+        post = Post(title=form.title.data, poster_id=poster, content=form.content.data, slug=form.slug.data)
         form.title.data = ''
-        form.content.data = ''
-        form.author.data = ''
+        form.content.data = '' 
         form.slug.data = ''
         
         db.session.add(post)    # For adding post 
@@ -252,7 +256,6 @@ def edit_post(id):
     form = PostForm()
     if form.validate_on_submit():
         post.title = form.title.data
-        post.author = form.author.data
         post.slug = form.slug.data
         post.content = form.content.data
         # Add to database
@@ -261,23 +264,29 @@ def edit_post(id):
         flash("Post updated successfully")
         return redirect(url_for('post', id=post.id))
     form.title.data=post.title 
-    form.author.data=post.author
     form.slug.data=post.slug
     form.content.data=post.content
     return render_template('edit_post.html', form=form)
     
     
 @app.route('/post/delete/<int:id>')
+@login_required
 def delete_post(id):
     post_to_delete = Post.query.get_or_404(id)
-    try:
-        db.session.delete(post_to_delete)
-        db.session.commit()
-        flash("Post Deleted Successfully !!")
-        posts = Post.query.order_by(Post.date_posted)
-        return render_template("posts.html", posts=posts)
-    except:
-        flash("There was a problem deleting the Post.... Try again")
+    id = current_user.id
+    if id == post_to_delete.poster.id:
+        try:
+            db.session.delete(post_to_delete)
+            db.session.commit()
+            flash("Post Deleted Successfully !!")
+            posts = Post.query.order_by(Post.date_posted)
+            return render_template("posts.html", posts=posts)
+        except:
+            flash("There was a problem deleting the Post.... Try again")
+            posts = Post.query.order_by(Post.date_posted)
+            return render_template("posts.html", posts=posts)
+    else:
+        flash("Sorry you can't delete this post!!")
         posts = Post.query.order_by(Post.date_posted)
         return render_template("posts.html", posts=posts)
         

@@ -11,13 +11,14 @@
     <br/>
     <div class="shadow p-3 mb-5 bg-body-tertiary rounded"> 
         <h2>{{post.title}}</h2>
-        By: {{post.author}}<br/>
+        By: {{post.poster.name}}<br/>
         {{post.date_posted}}
         <br/>
         {{post.content}}<br/>
         <br/><br/>
-    </div>
-    <a href="{{url_for('edit_post',id=post.id)}}" class="btn btn-success btn-sm">Back</a>
+    
+    <a href="{{url_for('edit_post',id=post.id)}}" class="btn btn-success btn-sm">Edit</a>
     <a href="{{url_for('delete_post',id=post.id)}}" class="btn btn-danger btn-sm">Delete</a>
     <a href="{{url_for('posts')}}" class="btn btn-success btn-sm">Back</a>
+    </div>
 {%endblock%}
