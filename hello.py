@@ -8,7 +8,7 @@ from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms.widgets import TextArea
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user 
-from webforms import UserForm, PostForm, NameForm, LoginForm, PasswordForm
+from webforms import UserForm, PostForm, NameForm, LoginForm, PasswordForm, SearchForm
 # Create a flask object
 app = Flask(__name__)
 app.app_context().push()
@@ -71,7 +71,11 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
-    
+
+@app.context_processor
+def base():
+    form = SearchForm()
+    return dict(form=form)
     
 @app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
@@ -349,3 +353,18 @@ def logout():
     logout_user()
     flash("You have been logout")
     return redirect(url_for('login'))
+
+
+# Create search function
+@app.route('/search', methods=["POST"])
+def search():
+    form = SearchForm()
+    posts = Post.query
+    if form.validate_on_submit():
+        # Get data from the search bar
+        post.searched = form.searched.data
+        # Query the database
+        posts = posts.filter(Post.content.like('%' + post.searched + '%'))
+        posts = posts.order_by(Post.title).all()
+        return render_template("search.html", form=form, searched = post.searched, posts=posts)
+
