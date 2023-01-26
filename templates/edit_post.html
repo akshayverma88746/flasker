@@ -24,6 +24,8 @@
             {{ form.submit(class="btn btn-primary") }}
             
         </form>
+        {{ ckeditor.load() }}
+        {{ ckeditor.config(name='content') }}
     </div>
     <a href="{{url_for('posts')}}" class="btn btn-success btn-sm">Back</a>
 {%endblock%}

@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, email_validator, EqualTo, Length
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms.widgets import TextArea
-
+from flask_ckeditor import CKEditorField
 
 class LoginForm(FlaskForm):
     username = StringField("Enter your username", validators=[DataRequired()])
@@ -43,7 +43,8 @@ class PostForm(FlaskForm):
     title = StringField("Enter the title of the Post", validators=[DataRequired()])
     author = StringField("Enter Author Name")
     slug = StringField("Slug", validators=[DataRequired()])
-    content = StringField("Content", validators=[DataRequired()], widget= TextArea())
+    #content = StringField("Content", validators=[DataRequired()], widget= TextArea())
+    content = CKEditorField('Content', validators=[DataRequired()])
     submit = SubmitField("Submit")
     
     

@@ -14,7 +14,7 @@
         By: {{post.poster.name}}<br/>
         {{post.date_posted}}
         <br/>
-        {{post.content}}<br/>
+        {{post.content|safe}}<br/>
         <br/><br/>
     {%if post.poster_id == current_user.id%}
     <a href="{{url_for('edit_post',id=post.id)}}" class="btn btn-success btn-sm">Edit</a>

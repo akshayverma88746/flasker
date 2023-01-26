@@ -9,9 +9,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms.widgets import TextArea
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user 
 from webforms import UserForm, PostForm, NameForm, LoginForm, PasswordForm, SearchForm
+from flask_ckeditor import CKEditor
 # Create a flask object
 app = Flask(__name__)
 app.app_context().push()
+ckeditor = CKEditor(app)
 
 # Add data base to our app
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
