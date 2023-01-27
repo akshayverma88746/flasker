@@ -1,57 +1,84 @@
 {%extends 'base.html'%}
-{% block content %}  
-    {%for messages in get_flashed_messages()%}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            {{ messages }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+{% block content %}
+{%for messages in get_flashed_messages()%}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  {{ messages }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{%endfor%}
+<h2>Dashboard</h2>
+<br />
+<div class="card">
+  <div class="card-header">
+    {{ current_user.name }}
+  </div>
+  <div class="card-body">
+
+    <p class="card-text">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-8">
+
+          <strong>Name:</strong>
+          {{ current_user.name }}<br />
+
+          <strong>Username:</strong>
+          {{ current_user.username }}<br />
+
+          <strong>User Id:</strong>
+          {{ current_user.id }}<br />
+
+          <strong>Email:</strong>
+          {{ current_user.email }}<br />
+
+          <strong>About Author:</strong>
+          {{ current_user.about_author }}<br />
+
+          <strong>Profile Pic:</strong>
+          {{ current_user.profile_pic }}<br />
+
+          <strong>Date Joined:</strong>
+          {{ current_user.date_added }}<br />
+          </p>
+          <a href="{{ url_for('logout')}}" class="btn btn-secondary btn-sm">Logout</a>
+          <a href="{{ url_for('update', id=current_user.id)}}" class="btn btn-secondary btn-sm">Update Profile</a>
+          <a href="{{ url_for('delete', id=current_user.id)}}" class="btn btn-danger btn-sm">Delete</a>
+          <br /><br />
         </div>
-        
-    {%endfor%}
-    
-        <h2>Dashboard</h2>
-        </br>
-        <div class="card">
-            <div class="card-header">
-                <strong>{{current_user.name}}</strong>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">Here is your account details</h5>
-              <p class="card-text"><strong>Username: </strong>{{current_user.username}}</br>
-                <strong>User Id: </strong>{{current_user.id}}</br>
-                <strong>Email: </strong>{{current_user.email}}</br>
-                <strong>Favorite Color: </strong>{{current_user.favorite_color}}</br>
-                <strong>Date Joined: </strong>{{current_user.date_added}}</br>
-              </p>
-              <a href="{{url_for('logout')}}" class="btn btn-primary">Logout</a>
-              <a href="{{ url_for ('update', id=current_user.id)}}" class="btn btn-primary">Update Profile</a>
-              <a href = "{{ url_for ('delete', id=current_user.id)}}" class="btn btn-danger">Delete Profile</a>
-            </div>
-          </div>
-          <br/>
-          <div class="card">
-            <div class="card-header">
-                <strong>Update Profile</strong>
-                </br>
-            </div>
-          </div>
-            <div class="shadow p-3 mb-5 bg-body-tertiary rounded">    
-              <form action="/dashboard" method="POST">
-                  {{ form.hidden_tag() }}
-                  {{ form.name.label(class="form-label") }}
-                  {{ form.name(class="form-control", value=name_to_update.name) }}
-                  </br>
-                  {{ form.username.label(class="form-label") }}
-                  {{ form.username(class="form-control", value=name_to_update.username) }}
-                  </br>
-                  {{ form.email.label(class="form-label") }}
-                  {{ form.email(class="form-control", value=name_to_update.email) }}
-                  </br>
-                  {{ form.favorite_color.label(class="form-label") }}
-                  {{ form.favorite_color(class="form-control", value=name_to_update.favorite_color) }}
-                  </br>
-                  {{ form.submit(class="btn btn-primary") }}
-              </form>
-            </div>
-            
-        
+        <div class="col-4">
+          <img src="{{ url_for('static', filename='images/user.png')}}" width="200" align="right">
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+<div class="card">
+  <div class="card-header">
+    <strong>Update Profile</strong>
+    </br>
+  </div>
+</div>
+<div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+  <form action="/dashboard" method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.name.label(class="form-label") }}
+    {{ form.name(class="form-control", value=name_to_update.name) }}
+    </br>
+    {{ form.username.label(class="form-label") }}
+    {{ form.username(class="form-control", value=name_to_update.username) }}
+    </br>
+    {{ form.email.label(class="form-label") }}
+    {{ form.email(class="form-control", value=name_to_update.email) }}
+    </br>
+    {{ form.about_author.label(class="form-label") }}
+    {{ form.about_author(class="form-control", value=name_to_update.email) }}
+    </br>
+    {{ form.submit(class="btn btn-primary") }}
+  </form>
+</div>
+
+
 {%endblock%}

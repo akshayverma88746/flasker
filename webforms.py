@@ -1,6 +1,6 @@
 from flask import Flask, render_template, flash, request, redirect, url_for# flash for flashing messages
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, TextAreaField
 from wtforms.validators import DataRequired, email_validator, EqualTo, Length
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -19,7 +19,7 @@ class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])# Create a text field for input
     username = StringField("Username", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
-    favorite_color = StringField("Color")
+    about_author = TextAreaField("About")
     password_hash = PasswordField("Password", validators=[DataRequired(), EqualTo('password_hash2', message="PAssword must match")])
     password_hash2 = PasswordField("Confirm Password", validators=[DataRequired()])
     submit = SubmitField("Submit")

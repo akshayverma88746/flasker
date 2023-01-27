@@ -44,7 +44,7 @@ class Users(db.Model, UserMixin):
     username = db.Column(db.String(200), nullable = False, unique= True)
     name = db.Column(db.String(200), nullable= False)
     email = db.Column(db.String(200), nullable = False, unique = True)
-    favorite_color = db.Column(db.String(200))
+    about_author = db.Column(db.Text(700), nullable= True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     #Create some password stuff
     password_hash = db.Column(db.String(200)) #, nullable = False, unique = True)
@@ -88,14 +88,14 @@ def add_user():
         if user is None:
             # Hash the password
             hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
-            user = Users(name= form.name.data, username=form.username.data, email= form.email.data, favorite_color= form.favorite_color.data, password_hash= hashed_pw)
+            user = Users(name= form.name.data, username=form.username.data, email= form.email.data, about_author= form.about_author.data, password_hash= hashed_pw)
             db.session.add(user)
             db.session.commit()
         name = form.name.data
         form.name.data = ''
         form.username.data = ''
         form.email.data = ''
-        form.favorite_color.data = ''
+        form.about_author.data = ''
         form.password_hash = ''
         flash("Sign in successfull")
     our_users = Users.query.order_by(Users.date_added)
@@ -159,8 +159,8 @@ def update(id):
 	if request.method == "POST":
 		name_to_update.name = request.form['name']
 		name_to_update.email = request.form['email']
-		name_to_update.favorite_color = request.form['favorite_color']
 		name_to_update.username = request.form['username']
+		name_to_update.about_author = request.form['about_author']
 		try:
 			db.session.commit()
 			flash("User Updated Successfully!")
@@ -327,8 +327,8 @@ def dashboard():
     if request.method == "POST":
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
-        name_to_update.favorite_color = request.form['favorite_color']
         name_to_update.username = request.form['username']
+        name_to_update.about_author = request.form['about_author']
         try:
             db.session.commit()
             flash("User Updated Successfully!")
@@ -360,13 +360,28 @@ def logout():
 # Create search function
 @app.route('/search', methods=["POST"])
 def search():
-    form = SearchForm()
-    posts = Post.query
-    if form.validate_on_submit():
-        # Get data from the search bar
-        post.searched = form.searched.data
-        # Query the database
-        posts = posts.filter(Post.content.like('%' + post.searched + '%'))
-        posts = posts.order_by(Post.title).all()
-        return render_template("search.html", form=form, searched = post.searched, posts=posts)
+	form = SearchForm()
+	posts = Post.query
+	if form.validate_on_submit():
+		# Get data from submitted form
+		post.searched = form.searched.data
+		# Query the Database
+		posts = posts.filter(Post.content.like('%' + post.searched + '%'))
+		posts = posts.order_by(Post.title).all()
 
+		return render_template("search.html",
+		 form=form,
+		 searched = post.searched,
+		 posts = posts)
+        
+        
+# Create admin page
+@app.route('/admin')
+@login_required
+def admin():
+    id = current_user.id
+    if id == 17:
+        return render_template('admin.html')
+    else:
+        flash("Sorry your are not the admin")
+        return redirect(url_for('dashboard'))

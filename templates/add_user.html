@@ -10,14 +10,14 @@
     {%if name%}
         <h1>Welcome to Flasker</h1>
         </br></br></br>
-        <table class="table table-light table-hover table-bordered table-striped">
+        <!-- <table class="table table-light table-hover table-bordered table-striped">
             {%for our_user in our_users%}
                 <tr>
                     <td>{{our_user.id}}. <a href="{{ url_for ('update', id=our_user.id)}}">{{our_user.name}}</a> - {{our_user.email}} - {{our_user.favorite_color}} -  <a href="{{ url_for ('delete', id=our_user.id)}}">Delete</a></td>
                 </tr>
             {%endfor%}
         </table>
-        </br>
+        </br> -->
         
     {%else%}
         <h1>Sign In</h1>
@@ -33,9 +33,6 @@
                 </br>
                 {{ form.email.label(class="form-label") }}
                 {{ form.email(class="form-control") }}
-                </br>
-                {{ form.favorite_color.label(class="form-label") }}
-                {{ form.favorite_color(class="form-control") }}
                 </br>
                 {{ form.password_hash.label(class="form-label") }}
                 {{ form.password_hash(class="form-control") }}
