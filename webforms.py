@@ -6,7 +6,7 @@ from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms.widgets import TextArea
 from flask_ckeditor import CKEditorField
-
+from flask_wtf.file import FileField
 class LoginForm(FlaskForm):
     username = StringField("Enter your username", validators=[DataRequired()])
     password = StringField("Enter your password", validators=[DataRequired()])
@@ -22,6 +22,7 @@ class UserForm(FlaskForm):
     about_author = TextAreaField("About")
     password_hash = PasswordField("Password", validators=[DataRequired(), EqualTo('password_hash2', message="PAssword must match")])
     password_hash2 = PasswordField("Confirm Password", validators=[DataRequired()])
+    profile_pic = FileField("Profile Pic")
     submit = SubmitField("Submit")
     
 

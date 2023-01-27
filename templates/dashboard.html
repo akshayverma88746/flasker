@@ -62,7 +62,7 @@
   </div>
 </div>
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-  <form action="/dashboard" method="POST">
+  <form action="/dashboard" method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     {{ form.name.label(class="form-label") }}
     {{ form.name(class="form-control", value=name_to_update.name) }}
@@ -74,7 +74,10 @@
     {{ form.email(class="form-control", value=name_to_update.email) }}
     </br>
     {{ form.about_author.label(class="form-label") }}
-    {{ form.about_author(class="form-control", value=name_to_update.email) }}
+    {{ form.about_author(class="form-control", value=name_to_update.about_author) }}
+    </br>
+    {{ form.profile_pic.label(class="form-label") }}
+    {{ form.profile_pic(class="form-control", value=name_to_update.profile_pic) }}
     </br>
     {{ form.submit(class="btn btn-primary") }}
   </form>
