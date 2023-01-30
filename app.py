@@ -349,7 +349,7 @@ def dashboard():
         name_to_update.profile_pic = pic_name
         try:
             db.session.commit()
-            saver.save(os.path.join(app.config['UPLOAD_FOLDER']),pic_name)
+            saver.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
             flash("User Updated Successfully!")
             return render_template("dashboard.html", 
 				form=form,
