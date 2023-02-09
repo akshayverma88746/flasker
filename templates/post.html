@@ -1,26 +1,61 @@
 {%extends 'base.html'%}
 {% block content %}  
-    {%for messages in get_flashed_messages()%}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            {{ messages }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        
-    {%endfor%}
-    <h1>Blog Post...</h1>
-    <br/>
-    <div class="shadow p-3 mb-5 bg-body-tertiary rounded"> 
-        <h2>{{post.title}}</h2>
-        By: {{post.poster.name}}<br/>
-        {{post.date_posted}}
-        <br/>
-        {{post.content|safe}}<br/>
-        {{post.poster.about_author}}
-        <br/><br/>
-    {%if post.poster_id == current_user.id%}
-    <a href="{{url_for('edit_post',id=post.id)}}" class="btn btn-success btn-sm">Edit</a>
-    <a href="{{url_for('delete_post',id=post.id)}}" class="btn btn-danger btn-sm">Delete</a>
-    <a href="{{url_for('posts')}}" class="btn btn-success btn-sm">Back</a>
-    {%endif%}
-    </div>
+    {% for message in get_flashed_messages() %}
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+{% endfor %}
+
+<br/>
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<h2>{{ post.title }}</h2>
+	<small>By: {{ post.poster.name }}<br/>
+	{{ post.date_posted }}</small> <br/><br/>
+
+	{{ post.content|safe }}<br/><br/>
+
+	
+<div class="card mb-3">
+	<div class="row no-gutters">
+		<div class="col-md-2">
+			{% if post.poster.profile_pic %}
+				<img src="{{ url_for('static', filename='images/' + post.poster.profile_pic)}}" width="150" align="left">
+			{% else %}
+				<img src="{{ url_for('static', filename='images/user.png')}}" width="150" align="left">
+			{% endif %}
+		</div>
+
+		<div class="col-md-10">
+			<div class="card-body">
+				<h5 class="card-title">
+					{{ post.poster.name }}			
+				</h5>
+				<p class="card-text">
+					{% if post.poster.about_author %}
+						{{ post.poster.about_author }}
+					{% else %}
+						Author has no about profile yet...
+					{% endif %}
+
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+</div>
+
+{% if post.poster_id == current_user.id %}
+
+	<a href="{{ url_for('edit_post', id=post.id)}}" class="btn btn-outline-secondary btn-sm">Edit Post</a>
+
+	<a href="{{ url_for('delete_post', id=post.id)}}" class="btn btn-outline-danger btn-sm">Delete Post</a>
+
+{% endif %}
+
+<a href="{{ url_for('posts')}}" class="btn btn-outline-secondary btn-sm">Back To Blog</a>
+
+
 {%endblock%}

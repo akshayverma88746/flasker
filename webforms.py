@@ -9,7 +9,7 @@ from flask_ckeditor import CKEditorField
 from flask_wtf.file import FileField
 class LoginForm(FlaskForm):
     username = StringField("Enter your username", validators=[DataRequired()])
-    password = StringField("Enter your password", validators=[DataRequired()])
+    password = PasswordField("Enter your password", validators=[DataRequired()])
     submit = SubmitField("Submit")
     
 
