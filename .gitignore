@@ -1,1 +1,3 @@
 virt/
+instance/
+__pycache__/
