@@ -21,7 +21,7 @@ ckeditor = CKEditor(app)
 
 # Add data base to our app
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://flaskerdb_user:hGDHDQY2iQu6DTQANBQObpIFRE0A10Vt@dpg-ciu1m7lgkuvoigeob490-a.oregon-postgres.render.com/flaskerdb'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 UPLOAD_FOLDER = 'static/images/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Secret key
