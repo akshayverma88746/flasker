@@ -21,7 +21,7 @@ ckeditor = CKEditor(app)
 
 # Add data base to our app
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost/our_users'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://flaskerdb_user:hGDHDQY2iQu6DTQANBQObpIFRE0A10Vt@dpg-ciu1m7lgkuvoigeob490-a.oregon-postgres.render.com/flaskerdb'
 UPLOAD_FOLDER = 'static/images/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Secret key
@@ -35,7 +35,7 @@ migrate = Migrate(app, db)
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(300), nullable = False)
-    content = db.Column(db.Text)
+    content = db.Column(db.Text())
     #author = db.Column(db.String(300))
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     slug = db.Column(db.String(300))
@@ -49,7 +49,7 @@ class Users(db.Model, UserMixin):
     username = db.Column(db.String(200), nullable = False, unique= True)
     name = db.Column(db.String(200), nullable= False)
     email = db.Column(db.String(200), nullable = False, unique = True)
-    about_author = db.Column(db.Text(700), nullable= True)
+    about_author = db.Column(db.Text(), nullable= True)
     profile_pic = db.Column(db.String(1000), nullable= True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     #Create some password stuff
